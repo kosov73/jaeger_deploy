@@ -1,0 +1,4 @@
+name: jaeger
+appVersion: 1.47
+description: Helm chart for installing jaeger in Kubernetes
+version: 0.1.4
