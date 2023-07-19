@@ -15,7 +15,7 @@ jaeger:
   service:
     name: jaeger-nodeport
 ## Порт для доступа к jaeger при выключенном ingress
-    nodePort: 30888
+    nodePort: 30005
   ingress:
 ## включение host в ingress
     enabled: false
