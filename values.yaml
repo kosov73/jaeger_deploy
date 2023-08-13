@@ -1,55 +1,193 @@
-## Настройки jaeger
-jaeger:
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 500m
-      memory: 8Gi
-  tolerations:
-    - effect: NoSchedule
-      key: dedicated
-      operator: Equal
-      value: monitoring
-  service:
-    name: jaeger-nodeport
-## Порт для доступа к jaeger при выключенном ingress
-    nodePort: 30005
-  ingress:
-## включение host в ingress
-    enabled: false
-    className: ""
-    annotations:
-      kubernetes.io/ingress.class: nginx
-## аннотации для работы cert-manager
-#      certmanager.io/cluster-issuer: letsencrypt
-    hosts:
-## домен (FQDN), по которому будет доступна система
-      - host: example.ru
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
-## включение шифрования, при использовании cert-manager указать используемый secretName letsencrypt
-#    tls:
-#      - secretName: example-ru-cert
-#        hosts:
-#          - example.ru
-## включить создание secret с собственными сертификатами
-## указать путь до сертификата в строках key: и cert:
-  secret:
-    enabled: false
-    key: "files/my_cert.key"
-    cert: "files/my_cert.crt"
-## Чтобы предотвратить проблему нехватки памяти задайте целочисленное значение трассировки 
-  memory_max_traces: 150000
-## количество реплик для обеспечения высокой доступности
-  replicaCount: 1
-## параметры подключения к приватному registry
-#  image:
-## адрес и путь для приватного registry
-#    repository: registry.example.com/jaeger
-#    tag: "1.47"
-## секрет с правами доступа к приватному registry должен быть создан вручную, зашифрованный в Base64
-#    pullSecrets:
-#      - myRegistryKeySecretName
+crdOverrides:
+  servicemonitors.monitoring.coreos.com:
+    skip: true
+  podmonitors.monitoring.coreos.com:
+    skip: false
+elma365:
+  global:
+## домен (FQDN) или ip адрес, по которому будет доступна система
+    host: '192.168.31.140'
+    ingress:
+## включение host в ingress (значение берется из host)
+## для установленного s3 minio через чарты elma365-dbs, укажите в блоке minio
+## значение в параметре hosts в файле values-dbs.yaml
+      hostEnabled: false
+      onpremiseTls:
+## включение https
+        enabled: false
+## имя секрета с сертификатами для работы https
+        secret: "elma365-onpremise-tls"
+## включение сертификата корневого CA для работы https с самоподписанным сертификатом
+        enabledCA: false
+## имя конфигмапы с сертификатом корневого CA для работы https с самоподписанным сертификатом
+        configCA: "elma365-onpremise-ca"
+      annotations:
+## для ingress-nginx версии выше 1.0 используется public
+        kubernetes.io/ingress.class: nginx
+## переопределить версию Kubernetes
+    kubeVersion: ""
+## включение поддержки HAProxy Ingress для работы на платформе OpenShift
+    openshift: false
+    machineId: /etc/machine-id
+## включить дашборды для grafana
+    monitoring:
+      enabled: true
+      metrics:
+        enabled: true
+        all: false
+      provisioner: "k8s"
+      dashboard:
+        enabled: true
+      alerts:
+        enabled: false
+## автомасштабирование сервисов
+    autoscaling:
+      enabled: false
+## минимальное и максимальное количество реплик
+      minReplicas: 1
+      maxReplicas: 9
+## адрес и секрет для приватного registry
+#    image:
+#      repository: registry.example.com
+#      dockerRegistry: registry.example.com
+## секрет с правами доступа к приватному registry, должен быть создан вручную, зашифрованный в Base64
+#      pullSecret:
+#        - myRegistryKeySecretName
+##
+## дополнительные параметры
+    postgres:
+      maxIdleConns: 10
+      maxOpenConns: 150
+      maxConnLife: 1m
+      poolMaxIdleConns: 10
+      poolMaxOpenConns: 150
+      poolConnMaxLifetime: 5m
+    maxGrpcMessageSize: "8388608"
+    maxGrpcBackoffDelay: 2s
+    activeDeadlineSeconds: 3000
+##
+## включить режим отладки платформы
+  debug: false
+##
+  bootstrapCompany:
+## эл. почта администратора
+    email: "admin@mail.com"
+## пароль администратора
+    password: "test"
+## язык установленной системы, возможные варианты: "ru-RU", "en-US", "sk-SK"
+    locale: "ru-RU"
+##
+  language:
+## язык установленной системы, возможные варианты: "ru-RU", "en-US", "sk-SK"
+    default: "ru-RU"
+##
+  db:
+## строки подключения (сonnection strings) для подключения к БД
+##
+## строки ниже заполнены для elma365-dbs, установленного в пространство имен default в ClusterMode
+## замените при необходимости
+##
+## расшифровка:
+## '<connection>://<username>:<password>@<servicename>.<namespace>.svc.<cluster.local>:<port>/<database>?<options>'
+## <connection>    - тип строки подключения: postgresql, mongodb, redis, amqp
+## <servicename>   - название service в кластере Kubernetes
+## <namespace>     - пространство имен, в которое устрановлена база данных
+## <cluster.local> - домен кластера, по умолчанию cluster.local
+##
+## строка подключения к БД Postgres, формат: postgresql://user:password@hostname:5432/databaseName
+    psqlUrl: 'postgres://postgres:pgpassword@postgres.elma365-dbs.svc.cluster.local:5432/elma365?sslmode=disable'
+## строка подключения к БД Postgres только для чтения, формат: postgresql://user:password@hostname:5432/databaseName
+## имя секрета со строкой подключения к БД Postgres, зашифрованной в Base64 (ключ PSQL_URL)
+#    psqlSecret: elma365-custom-db-connections
+    roPsqlUrl: ''
+## ClusterMode - следующая строка используется для PostgreSQL в Cluster Mode
+#    roPsqlUrl: 'postgres://postgres:pgpassword@postgres-read.default.svc.cluster.local:5432/elma365?sslmode=disable'
+## имя секрета со строкой подключения к БД Postgres только для чтения, зашифрованной в Base64 (ключ RO_POSTGRES_URL)
+#    roPsqlSecret: elma365-custom-db-connections
+## cтрока подключения к БД MongoDB для приложения, формат: mongodb://user:password@hostname:27017/databaseName
+    mongoUrl: 'mongodb://elma365:mongopassword@mongo.elma365-dbs.svc.cluster.local:27017/elma365?ssl=false&replicaSet=rs0&readPreference=secondaryPreferred'
+## имя секрета со строкой подключения к БД MongoDB для приложения, зашифрованной в Base64 (ключ MONGO_URL)
+#    mongoSecret: elma365-custom-db-connections
+## cтрока подключения к БД MongoDB для сервера авторизации, формат: mongodb://user:password@hostname:27017/databaseName
+    vahterMongoUrl: 'mongodb://elma365:mongopassword@mongo.elma365-dbs.svc.cluster.local:27017/elma365?ssl=false&replicaSet=rs0&readPreference=secondaryPreferred'
+## имя секрета со строкой подключения к БД MongoDB для сервера авторизации, зашифрованной в Base64 (ключ VAHTER_MONGO_URL)
+#    vahterMongoSecret: elma365-custom-db-connections
+## mongoUrl и vahterMongoUrl могут быть одинаковыми, коллекции внутри бд не пересекаются
+## cтрока подключения к Redis, формат: redis://user:password@redis.local:6379/databaseName
+    redisUrl: 'redis://redis.elma365-dbs.svc.cluster.local:6379/0'
+## имя секрета со строкой подключения к Redis, зашифрованной в Base64 (ключ REDIS_URL)
+#    redisSecret: elma365-custom-db-connections
+## cтрока подключения к Rabbit, формат amqp://user:password@hostname:5672/vhost
+    amqpUrl: 'amqp://elma365:rmqpassword@rabbitmq.elma365-dbs.svc.cluster.local:5672/elma365'
+## имя секрета со строкой подключения к Rabbit, зашифрованной в Base64 (ключ AMQP_URL)
+#    amqpSecret: elma365-custom-db-connections
+##
+## настройки подключения к S3 хранилищу файлов
+    s3:
+      method: PUT
+      accesskeyid: PZSF73JG72Ksd955JKU1HIA
+      secretaccesskey: aFDkj28Jbs2JKbnvJH678MNwiz88zKjsuNBHHs
+      bucket: s3elma365
+      backend:
+        address: 192.168.31.140
+        region: us-east-1
+      ssl:
+        enabled: "false"
+## имя секрета с подключением к S3 хранилищу файлов, зашифрованной в Base64
+## (ключи S3_BACKEND_ADDRESS, S3_REGION, S3_KEY, S3_SECRET, S3_BUCKET, S3_SSL_ENABLED, S3_UPLOAD_METHOD)
+#    s3Secret: elma365-custom-db-connections
+##
+## настройки для подключения к SMTP серверу отправки почты
+  mailer:
+    smtp:
+## адрес SMTP-сервера, например "smtp.example.ru"
+      host: ""
+## порт, который слушает SMTPсервер, например 25, или 485, или 587
+      port: ""
+## адрес отправителя электронной почты, например "CompanyName <noreply@example.ru>"
+      from: ""
+## пользователь для авторизации на SMTP сервере, например "noreply@example.ru" или "noreply"
+      user: ""
+## пароль для авторизации на SMTP сервере
+      password: ""
+## используется ли шифрование (true - если да, false - если нет)
+      needTLS: false
+##
+## включение флагов
+  settings:
+    appconfig:
+      onPremiseEnabledFeatureFlags:
+        - extensionEventHandling
+        - processEventHandling
+        - delegatedEventHandling
+        - appItemViewEventEnabled
+        - fileDownloadEventEnabled
+        - filePreviewEventEnabled
+        - enableModuleServices
+        - allowAttachWidgetFiles
+        - allowPortal
+        - allowPortalPageTemplates
+        - useLegacyNodeVM
+        - allowServerScriptsImport
+        - allowImportPortalUsersForAD
+        - allowImportPortalUsersForLDAP
+        - allowAuthPortalUsersWithSAML
+        - allowPortalLicensing
+        - allowEntityLocalization
+        - allowTodolist
+        - enableDuplicateFTS
+## Настраивается для ELMA Bot
+#        - allowLinesBots
+#  hydra-adaptor:
+#    appconfig:
+#      client_id: elma.assistant.clients.external.elma365.server
+#      client_secret: wvmtLu1KAvf8XjtULBFJ3DP0eB
+#      hydraAdminURL: http://hydra-admin:4445
+#      loginEndpoint: "https://{{ .Values.global.host }}/ext-api/oidc-adaptor/login"
+#  elmabot-proxy:
+#    appconfig:
+#      apiUrl: "https://elma365.{{ .Values.global.host }}"
+#      grantType: elma.assistant.auth.grants.impersonation.elma365
+#      identityServerUrl: https://auth.{{ .Values.global.host }}
+#      oidcUri: "{{ .Values.global.host }}"
+#      scope: elma.assistant.scopes.api.gateways.elma365 elma.assistant.scopes.auth.impersonation
