@@ -5,7 +5,7 @@ global:
     enabled: true
   mongodb:
     ## Установка mongoDB
-    enabled: false
+    enabled: true
   redis:
     ## Установка redis
     enabled: true
