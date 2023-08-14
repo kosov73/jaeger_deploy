@@ -5,7 +5,7 @@ crdOverrides:
     skip: false
 global:
 ## домен (FQDN) или ip адрес, по которому будет доступна система
-  host: '192.168.31.140'
+  host: 'office.hatsuhana.ru'
   ingress:
 ## включение host в ingress (значение берется из host)
 ## для установленного s3 minio через чарты elma365-dbs, укажите в блоке minio
