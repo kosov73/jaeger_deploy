@@ -3,48 +3,48 @@ crdOverrides:
     skip: true
   podmonitors.monitoring.coreos.com:
     skip: false
-  global:
+global:
 ## домен (FQDN) или ip адрес, по которому будет доступна система
-    host: '192.168.31.140'
-    ingress:
+  host: '192.168.31.140'
+  ingress:
 ## включение host в ingress (значение берется из host)
 ## для установленного s3 minio через чарты elma365-dbs, укажите в блоке minio
 ## значение в параметре hosts в файле values-dbs.yaml
-      hostEnabled: false
-      onpremiseTls:
+    hostEnabled: false
+    onpremiseTls:
 ## включение https
-        enabled: false
-## имя секрета с сертификатами для работы https
-        secret: "elma365-onpremise-tls"
-## включение сертификата корневого CA для работы https с самоподписанным сертификатом
-        enabledCA: false
-## имя конфигмапы с сертификатом корневого CA для работы https с самоподписанным сертификатом
-        configCA: "elma365-onpremise-ca"
-      annotations:
-## для ingress-nginx версии выше 1.0 используется public
-        kubernetes.io/ingress.class: nginx
-## переопределить версию Kubernetes
-    kubeVersion: ""
-## включение поддержки HAProxy Ingress для работы на платформе OpenShift
-    openshift: false
-    machineId: /etc/machine-id
-## включить дашборды для grafana
-    monitoring:
-      enabled: true
-      metrics:
-        enabled: true
-        all: false
-      provisioner: "k8s"
-      dashboard:
-        enabled: true
-      alerts:
-        enabled: false
-## автомасштабирование сервисов
-    autoscaling:
       enabled: false
+## имя секрета с сертификатами для работы https
+      secret: "elma365-onpremise-tls"
+## включение сертификата корневого CA для работы https с самоподписанным сертификатом
+      enabledCA: false
+## имя конфигмапы с сертификатом корневого CA для работы https с самоподписанным сертификатом
+      configCA: "elma365-onpremise-ca"
+    annotations:
+## для ingress-nginx версии выше 1.0 используется public
+      kubernetes.io/ingress.class: nginx
+## переопределить версию Kubernetes
+  kubeVersion: ""
+## включение поддержки HAProxy Ingress для работы на платформе OpenShift
+  openshift: false
+  machineId: /etc/machine-id
+## включить дашборды для grafana
+  monitoring:
+    enabled: true
+    metrics:
+      enabled: true
+      all: false
+    provisioner: "k8s"
+    dashboard:
+      enabled: true
+    alerts:
+      enabled: false
+## автомасштабирование сервисов
+  autoscaling:
+    enabled: false
 ## минимальное и максимальное количество реплик
-      minReplicas: 1
-      maxReplicas: 9
+    minReplicas: 1
+    maxReplicas: 9
 ## адрес и секрет для приватного registry
 #    image:
 #      repository: registry.example.com
@@ -54,73 +54,73 @@ crdOverrides:
 #        - myRegistryKeySecretName
 ##
 ## дополнительные параметры
-    postgres:
-      maxIdleConns: 10
-      maxOpenConns: 150
-      maxConnLife: 1m
-      poolMaxIdleConns: 10
-      poolMaxOpenConns: 150
-      poolConnMaxLifetime: 5m
-    maxGrpcMessageSize: "8388608"
-    maxGrpcBackoffDelay: 2s
-    activeDeadlineSeconds: 3000
+  postgres:
+    maxIdleConns: 10
+    maxOpenConns: 150
+    maxConnLife: 1m
+    poolMaxIdleConns: 10
+    poolMaxOpenConns: 150
+    poolConnMaxLifetime: 5m
+  maxGrpcMessageSize: "8388608"
+  maxGrpcBackoffDelay: 2s
+  activeDeadlineSeconds: 3000
 ##
 ## включить режим отладки платформы
-  debug: false
+debug: false
 ##
-  bootstrapCompany:
+bootstrapCompany:
 ## эл. почта администратора
-    email: "admin@mail.com"
+  email: "admin@mail.com"
 ## пароль администратора
-    password: "test"
+  password: "test"
 ## язык установленной системы, возможные варианты: "ru-RU", "en-US", "sk-SK"
-    locale: "ru-RU"
+  locale: "ru-RU"
 ##
-  language:
+language:
 ## язык установленной системы, возможные варианты: "ru-RU", "en-US", "sk-SK"
-    default: "ru-RU"
+  default: "ru-RU"
 ##
   
 ##
 ## настройки для подключения к SMTP серверу отправки почты
-  mailer:
-    smtp:
+mailer:
+  smtp:
 ## адрес SMTP-сервера, например "smtp.example.ru"
-      host: ""
+    host: ""
 ## порт, который слушает SMTPсервер, например 25, или 485, или 587
-      port: ""
-## адрес отправителя электронной почты, например "CompanyName <noreply@example.ru>"
-      from: ""
+    port: ""
+# адрес отправителя электронной почты, например "CompanyName <noreply@example.ru>"
+    from: ""
 ## пользователь для авторизации на SMTP сервере, например "noreply@example.ru" или "noreply"
-      user: ""
+    user: ""
 ## пароль для авторизации на SMTP сервере
-      password: ""
+    password: ""
 ## используется ли шифрование (true - если да, false - если нет)
-      needTLS: false
+    needTLS: false
 ##
 ## включение флагов
-  settings:
-    appconfig:
-      onPremiseEnabledFeatureFlags:
-        - extensionEventHandling
-        - processEventHandling
-        - delegatedEventHandling
-        - appItemViewEventEnabled
-        - fileDownloadEventEnabled
-        - filePreviewEventEnabled
-        - enableModuleServices
-        - allowAttachWidgetFiles
-        - allowPortal
-        - allowPortalPageTemplates
-        - useLegacyNodeVM
-        - allowServerScriptsImport
-        - allowImportPortalUsersForAD
-        - allowImportPortalUsersForLDAP
-        - allowAuthPortalUsersWithSAML
-        - allowPortalLicensing
-        - allowEntityLocalization
-        - allowTodolist
-        - enableDuplicateFTS
+settings:
+  appconfig:
+    onPremiseEnabledFeatureFlags:
+      - extensionEventHandling
+      - processEventHandling
+      - delegatedEventHandling
+      - appItemViewEventEnabled
+      - fileDownloadEventEnabled
+      - filePreviewEventEnabled
+      - enableModuleServices
+      - allowAttachWidgetFiles
+      - allowPortal
+      - allowPortalPageTemplates
+      - useLegacyNodeVM
+      - allowServerScriptsImport
+      - allowImportPortalUsersForAD
+      - allowImportPortalUsersForLDAP
+      - allowAuthPortalUsersWithSAML
+      - allowPortalLicensing
+      - allowEntityLocalization
+      - allowTodolist
+      - enableDuplicateFTS
 ## Настраивается для ELMA Bot
 #        - allowLinesBots
 #  hydra-adaptor:
