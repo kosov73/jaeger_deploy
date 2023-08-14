@@ -12,7 +12,7 @@
 ## <cluster.local> - домен кластера, по умолчанию cluster.local
 ##
 ## строка подключения к БД Postgres, формат: postgresql://user:password@hostname:5432/databaseName
-    psqlUrl: 'postgres://postgres:pgpassword@postgres.lma365-dbs.svc.cluster.local:5432/elma365?sslmode=disable'
+    psqlUrl: 'postgres://postgres:pgpassword@postgres.elma365-dbs.svc.cluster.local:5432/elma365?sslmode=disable'
 ## строка подключения к БД Postgres только для чтения, формат: postgresql://user:password@hostname:5432/databaseName
 ## имя секрета со строкой подключения к БД Postgres, зашифрованной в Base64 (ключ PSQL_URL)
 #    psqlSecret: elma365-custom-db-connections
@@ -26,16 +26,16 @@
 ## имя секрета со строкой подключения к БД MongoDB для приложения, зашифрованной в Base64 (ключ MONGO_URL)
 #    mongoSecret: elma365-custom-db-connections
 ## cтрока подключения к БД MongoDB для сервера авторизации, формат: mongodb://user:password@hostname:27017/databaseName
-    vahterMongoUrl: 'mongodb://elma365:mongopassword@mongo.lma365-dbs.svc.cluster.local:27017/elma365?ssl=false&replicaSet=rs0&readPreference=secondaryPreferred'
+    vahterMongoUrl: 'mongodb://elma365:mongopassword@mongo.elma365-dbs.svc.cluster.local:27017/elma365?ssl=false&replicaSet=rs0&readPreference=secondaryPreferred'
 ## имя секрета со строкой подключения к БД MongoDB для сервера авторизации, зашифрованной в Base64 (ключ VAHTER_MONGO_URL)
 #    vahterMongoSecret: elma365-custom-db-connections
 ## mongoUrl и vahterMongoUrl могут быть одинаковыми, коллекции внутри бд не пересекаются
 ## cтрока подключения к Redis, формат: redis://user:password@redis.local:6379/databaseName
-    redisUrl: 'redis://redis.lma365-dbs.svc.cluster.local:6379/0'
+    redisUrl: 'redis://redis.elma365-dbs.svc.cluster.local:6379/0'
 ## имя секрета со строкой подключения к Redis, зашифрованной в Base64 (ключ REDIS_URL)
 #    redisSecret: elma365-custom-db-connections
 ## cтрока подключения к Rabbit, формат amqp://user:password@hostname:5672/vhost
-    amqpUrl: 'amqp://elma365:rmqpassword@rabbitmq.lma365-dbs.svc.cluster.local:5672/elma365'
+    amqpUrl: 'amqp://elma365:rmqpassword@rabbitmq.elma365-dbs.svc.cluster.local:5672/elma365'
 ## имя секрета со строкой подключения к Rabbit, зашифрованной в Base64 (ключ AMQP_URL)
 #    amqpSecret: elma365-custom-db-connections
 ##
