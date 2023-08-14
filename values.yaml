@@ -3,7 +3,6 @@ crdOverrides:
     skip: true
   podmonitors.monitoring.coreos.com:
     skip: false
-elma365:
   global:
 ## домен (FQDN) или ip адрес, по которому будет доступна система
     host: '192.168.31.140'
